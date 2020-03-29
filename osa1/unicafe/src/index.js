@@ -11,49 +11,52 @@ const Button = (props) => {
 }
 
 
-//tehdään taulukko arvoille ja tähän lisäykset g/n/b
+const Average = (props) => {
+  return (
+    <div>
+       <p>average {((props.aanet.good * 1) + (props.aanet.neutral * 0) + (props.aanet.bad * (-1) ) ) / props.aanet.all} </p> 
+    </div>
+  )
+}
+
+
+const Positive = (props) => {
+  return (
+    <div>
+       <p>positive { props.aanet.good * 100 / props.aanet.all } % </p> 
+    </div>
+  )
+}
 
 
 const App = () => {
-  // tallenna napit omaan tilaansa
-  const [good, setGood] = useState(0)
-  const [neutral, setNeutral] = useState(0)
-  const [bad, setBad] = useState(0)
+  const [aanet, setAanet] = useState({
+  good: 0, neutral: 0, bad: 0, all: 0  //, average: null, postive: null
+  })
 
   const handleVoteGood = () => {
-    //...
-    setGood(good + 1)
-  }  
+    setAanet({ ...aanet, good: aanet.good + 1, all: aanet.all + 1 }) //,
+  } 
   
-  const handleVoteNeutral = () => {
-  //...
-    setNeutral(neutral +1)
-  }  
+  const handleVoteNeutral = () =>
+    setAanet({ ...aanet, neutral: aanet.neutral + 1, all: aanet.all + 1 }) //,
 
-  const handleVoteBad = () => {
-//...
-    setBad(bad + 1) 
-  }
+  const handleVoteBad = () =>
+    setAanet({ ...aanet, bad: aanet.bad + 1, all: aanet.all + 1 }) //, 
 
   return (
     <div>
       <h1>give feedback</h1>
-      <Button
-        handleClick={handleVoteGood}
-        text='good'
-      />
-      <Button
-        handleClick={handleVoteNeutral}
-        text='neutral'
-      />
-      <Button
-        handleClick={handleVoteBad}
-        text='bad'
-      />
+      <Button handleClick={handleVoteGood} text='good'/>
+      <Button handleClick={handleVoteNeutral} text='neutral' />
+      <Button handleClick={handleVoteBad} text='bad' />
       <h1>statistics</h1>
-  <p>good {good}</p>
-  <p>neutral {neutral}</p>
-  <p>bad {bad}</p>
+      <p>good {aanet.good}</p>
+      <p>neutral {aanet.neutral}</p>
+      <p>bad {aanet.bad}</p>
+      <p>all {aanet.all}</p>
+      <Average aanet={aanet} />
+      <Positive aanet={aanet} /> 
     </div>
   )
 }

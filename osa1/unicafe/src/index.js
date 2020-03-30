@@ -11,27 +11,63 @@ const Button = (props) => {
 }
 
 
-const Average = (props) => {
+const Statistics = (props) => {
+  if (props.aanet.all === 0) {
+    return(
+    <div>
+      <p>
+        No feedback given
+      </p>
+    </div>
+    )
+  }
+
   return (
     <div>
-       <p>average {((props.aanet.good * 1) + (props.aanet.neutral * 0) + (props.aanet.bad * (-1) ) ) / props.aanet.all} </p> 
+      <StatisticLine text="good" value ={props.aanet.good} />
+      <StatisticLine text="neutral" value ={props.aanet.neutral} />
+      <StatisticLine text="bad" value ={props.aanet.bad} />
+      <StatisticLine text="all" value ={props.aanet.all}/>
+      <StatisticLine text="average" value = {Average (props)} />
+      <StatisticLine text="positive" value ={Positive (props)} />
     </div>
+  )
+}
+
+
+
+const StatisticLine = (props) => {
+  const {text, value} = props
+  return (
+    <>
+      {text} {value} 
+      <br />
+    </>
+  )
+}
+
+
+const Average = (props) => {
+  return (
+    <>
+       {((props.aanet.good * 1) + (props.aanet.neutral * 0) + (props.aanet.bad * (-1) ) ) / props.aanet.all} 
+    </>
   )
 }
 
 
 const Positive = (props) => {
   return (
-    <div>
-       <p>positive { props.aanet.good * 100 / props.aanet.all } % </p> 
-    </div>
+    <>
+       { props.aanet.good * 100 / props.aanet.all } % 
+    </>
   )
 }
 
 
 const App = () => {
   const [aanet, setAanet] = useState({
-  good: 0, neutral: 0, bad: 0, all: 0  //, average: null, postive: null
+  good: 0, neutral: 0, bad: 0, all: 0
   })
 
   const handleVoteGood = () => {
@@ -51,12 +87,7 @@ const App = () => {
       <Button handleClick={handleVoteNeutral} text='neutral' />
       <Button handleClick={handleVoteBad} text='bad' />
       <h1>statistics</h1>
-      <p>good {aanet.good}</p>
-      <p>neutral {aanet.neutral}</p>
-      <p>bad {aanet.bad}</p>
-      <p>all {aanet.all}</p>
-      <Average aanet={aanet} />
-      <Positive aanet={aanet} /> 
+      <Statistics aanet={aanet} /> 
     </div>
   )
 }

@@ -35,14 +35,15 @@ const Statistics = (props) => {
 }
 
 
-
 const StatisticLine = (props) => {
   const {text, value} = props
   return (
-    <>
-      {text} {value} 
-      <br />
-    </>
+    <table>
+      <tr>
+        <td>{text}</td>
+        <td>{value}</td>
+      </tr>
+    </table>
   )
 }
 
@@ -71,14 +72,14 @@ const App = () => {
   })
 
   const handleVoteGood = () => {
-    setAanet({ ...aanet, good: aanet.good + 1, all: aanet.all + 1 }) //,
+    setAanet({ ...aanet, good: aanet.good + 1, all: aanet.all + 1 })
   } 
   
   const handleVoteNeutral = () =>
-    setAanet({ ...aanet, neutral: aanet.neutral + 1, all: aanet.all + 1 }) //,
+    setAanet({ ...aanet, neutral: aanet.neutral + 1, all: aanet.all + 1 })
 
   const handleVoteBad = () =>
-    setAanet({ ...aanet, bad: aanet.bad + 1, all: aanet.all + 1 }) //, 
+    setAanet({ ...aanet, bad: aanet.bad + 1, all: aanet.all + 1 })
 
   return (
     <div>

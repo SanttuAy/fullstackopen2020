@@ -14,7 +14,7 @@ const App = (props) => {
   const [selected, setSelected] = useState(0)
   const [kaikkiAanet, setKaikkiAanet] = useState([0, 0, 0, 0, 0, 0])
   const [aanetNyt, setAanetNyt] = useState(0)
-
+  
   function getRandomInt(minimi, maksimi) {
     minimi = Math.ceil(minimi);
     maksimi = Math.floor(maksimi);
@@ -29,7 +29,8 @@ const App = (props) => {
 
   const handleAanestys = () => {
     kaikkiAanet[selected] = kaikkiAanet[selected] +1 
-    console.log(kaikkiAanet) 
+    setKaikkiAanet(kaikkiAanet.slice())
+    //console.log(kaikkiAanet) //testitulostus
     setAanetNyt(kaikkiAanet[selected])
     }
 

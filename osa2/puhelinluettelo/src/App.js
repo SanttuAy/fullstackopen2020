@@ -1,46 +1,29 @@
 import React, { useState, useEffect } from 'react'
-import Filtterointi from './components/Filtterointi'
+import Naytettavat from './components/Naytettavat'
 import PersonForm from './components/PersonForm'
-import axios from 'axios'
-
+import connectionService from './services/connections'
 
 
 const App = () => {
-  const [ persons, setPersons] = useState([ 
+  const [ persons, setPersons] = useState([  //kovakoodatut testejä varten, huomaa numero nimissä
     { name: 'Arto Hellas1', number: '040-1231244' }, 
     { name: 'Ada Lovelace1', number: '39-44-5323523' },
     { name: 'Dan Abramov1', number: '12-43-234345' },
     { name: 'Mary Poppendieck1', number: '39-23-6423122' }
   ]) 
   const [ newName, setNewName ] = useState('') // nimisyötekentän arvo
-  const [ isAlready, setIsAlready ] = useState(false)
+  const [ isAlready, setIsAlready ] = useState(false) //onko nimi jo luettelossa
   const [ newNumber, setNewNumber ] = useState('') // numerosyötekentän arvo
   const [ showAll, setShowAll ] = useState(true) // näytetäänkö kaikki vai filtterillä
   const [ filtteri, setFiltteri ] = useState('') // filtteri jolla haetaan näytettävät
 
   useEffect(() => {
-    console.log('effect')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled')
-        setPersons(response.data)
+    connectionService
+      .getAll()
+      .then(initialConnections => {
+        setPersons(initialConnections)
       })
-  }, [])
-  console.log('render', persons.length, 'persons')
-
-
-  const handleFilterChange = (event) => {
-    //console.log('filtteri:', event.target.value) //mallin mukainen seuranta...
-    setFiltteri(event.target.value)
-    if (filtteri !== '') setShowAll(false)
-    else setShowAll(true)
-  }
-
-  const handleNumberChange = (event) => {
-    //console.log('numero:', event.target.value) //mallin mukaan seurataan tätäkin konsolissa
-    setNewNumber(event.target.value)
-  }
+    }, [])
 
   const addNewConnection = (event) => {
     event.preventDefault()
@@ -48,16 +31,32 @@ const App = () => {
         name: newName,
         number: newNumber
     }
-    const lisataanko = isAlready
+    isAlready
     ? window.alert(`${newName} on jo lisätty luetteloon`)
-    : setPersons(persons.concat(connectionObject))
-    setNewName('')
-    setNewNumber('')
-    if (isAlready) setIsAlready(false)
+    : 
+    connectionService
+      .create(connectionObject)
+        .then(returnedConnection => {
+        setPersons(persons.concat(returnedConnection))
+        setNewName('')
+        setNewNumber('')
+      })
+      if (isAlready) setIsAlready(false)
   }
 
+
+  const handleFilterChange = (event) => {
+    setFiltteri(event.target.value)
+    if (filtteri !== '') setShowAll(false)
+    else setShowAll(true)
+  }
+
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value)
+  }
+
+
   const handleNameChange = (event) => {
-    //console.log('nimi:', event.target.value) // mallin mukaisesti seurataan konsolissa
     setNewName(event.target.value) //inputin syötekentän arvo
   }
 
@@ -67,6 +66,10 @@ const App = () => {
       setIsAlready(true)
     }
   } 
+
+  /*const deletion = (id) => {
+    console.log(`yhteys ${id} poistetaan`)
+  }*/
 
 
   return ( 
@@ -82,10 +85,16 @@ const App = () => {
       <PersonForm addNewConnection={addNewConnection} newName={newName} handleNameChange={handleNameChange} 
       newNumber={newNumber} handleNumberChange={handleNumberChange} tarkistus={tarkistus} />
       <h3>Numbers</h3>
-      <Filtterointi persons={persons} filtteri={filtteri} showAll={showAll}  />
+      <Naytettavat 
+        persons={persons} 
+        filtteri={filtteri} 
+        showAll={showAll} 
+        setPersons = {setPersons}
+      />
     </div>
   )
 
+  //deletion={() => deletion(connection.id) }
 }
 
 export default App

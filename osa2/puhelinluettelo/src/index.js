@@ -1,5 +1,5 @@
-import React from 'react' //tämä varmaan...
-import ReactDOM from 'react-dom' //tämäkin?
+import React from 'react' 
+import ReactDOM from 'react-dom' 
 import App from './App'
 
 ReactDOM.render(

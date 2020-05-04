@@ -19,7 +19,13 @@ const Naytettavat = (props) => {
       .then(returnedConnections => { 
       console.log(returnedConnections)
       props.setPersons(props.persons.filter(alkio => alkio.id !==id))
-      })
+      props.setViesti(
+        `${name} poistettiin luettelosta`
+      )
+      setTimeout(() => {
+        props.setViesti(null)
+      }, 5000) 
+    })
       .catch(error => {
         console.log('Poisto ei onnistu!')
       })
@@ -29,7 +35,7 @@ const Naytettavat = (props) => {
     return (
       <ul>
         {connectionsToShow.map((connection, i) =>
-        <li key = {connection.name}> {connection.name} {connection.number}
+        <li key = {i}> {connection.name} {connection.number}
         <button onClick={() => deletionOf(connection.id, connection.name)}>delete</button>
         </li>
         )}

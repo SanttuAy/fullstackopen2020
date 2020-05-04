@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react'
+import './index.css'
 import Naytettavat from './components/Naytettavat'
 import PersonForm from './components/PersonForm'
 import connectionService from './services/connections'
+import Ilmoitus from './components/Ilmoitus'
 
 
 const App = () => {
-  const [ persons, setPersons] = useState([  //kovakoodatut testejä varten, huomaa numero nimissä
+  const [ persons, setPersons] = useState([  //kovakoodatut testejä varten, huomaa numero nimissä palvelimella oleviin nähden
     { name: 'Arto Hellas1', number: '040-1231244' }, 
     { name: 'Ada Lovelace1', number: '39-44-5323523' },
     { name: 'Dan Abramov1', number: '12-43-234345' },
@@ -16,7 +18,9 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('') // numerosyötekentän arvo
   const [ showAll, setShowAll ] = useState(true) // näytetäänkö kaikki vai filtterillä
   const [ filtteri, setFiltteri ] = useState('') // filtteri jolla haetaan näytettävät
-
+  const [ paivitettava, setPaivitettava] = useState(-1) //päivitettävän id
+  const [ viesti, setViesti] = useState(null) //viesti suoritetusta toimenpiteestä 
+  
   useEffect(() => {
     connectionService
       .getAll()
@@ -31,17 +35,38 @@ const App = () => {
         name: newName,
         number: newNumber
     }
-    isAlready
-    ? window.alert(`${newName} on jo lisätty luetteloon`)
+    const paivitetaanko = isAlready
+    ? window.confirm(`${newName} on jo lisätty luetteloon. Vaihdetaanko hänen numeronsa uuteen?`)
     : 
     connectionService
       .create(connectionObject)
         .then(returnedConnection => {
         setPersons(persons.concat(returnedConnection))
+        setViesti(
+          `Henkilö nimeltä ${newName} lisättiin puhelinluetteloon`
+        )
+        setTimeout(() => {
+          setViesti(null)
+        }, 5000)  
         setNewName('')
         setNewNumber('')
       })
       if (isAlready) setIsAlready(false)
+    if (paivitetaanko) {
+      connectionService
+        .update(paivitettava, connectionObject)
+        .then(response => {
+          setPersons(persons.map(person => person.id !== paivitettava ? person : response))
+        })
+        setViesti(
+          `Henkilön ${newName} numero päivitettiin`
+        )
+        setTimeout(() => {
+          setViesti(null)
+        }, 5000) 
+        setNewName('')
+        setNewNumber('')
+    }     
   }
 
 
@@ -58,23 +83,23 @@ const App = () => {
 
   const handleNameChange = (event) => {
     setNewName(event.target.value) //inputin syötekentän arvo
+    
   }
 
   const tarkistus = () => {
     var nimet = persons.map((henkilo) => henkilo.name.toLocaleLowerCase())
     if (nimet.includes(newName.toLocaleLowerCase())) {
       setIsAlready(true)
+      const etsitty = persons.find( person => person.name.toLocaleLowerCase() === newName.toLocaleLowerCase() ) 
+      setPaivitettava(etsitty.id)
     }
   } 
-
-  /*const deletion = (id) => {
-    console.log(`yhteys ${id} poistetaan`)
-  }*/
 
 
   return ( 
     <div>
       <h2>Phonebook</h2>
+      <Ilmoitus viesti={viesti} persons = {persons} />
       <div>
       filter show with <input
         value={filtteri}
@@ -89,12 +114,13 @@ const App = () => {
         persons={persons} 
         filtteri={filtteri} 
         showAll={showAll} 
-        setPersons = {setPersons}
+        setPersons={setPersons}
+        viesti={viesti}
+        setViesti={setViesti}
       />
     </div>
   )
 
-  //deletion={() => deletion(connection.id) }
 }
 
 export default App

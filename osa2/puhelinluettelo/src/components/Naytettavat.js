@@ -17,14 +17,14 @@ const Naytettavat = (props) => {
       connectionService
       .poisto(id)
       .then(returnedConnections => { 
-      console.log(returnedConnections)
+      //console.log(returnedConnections)
       props.setPersons(props.persons.filter(alkio => alkio.id !==id))
       props.setViesti(
         `${name} poistettiin luettelosta`
       )
       setTimeout(() => {
         props.setViesti(null)
-      }, 5000) 
+      }, 5000)
     })
       .catch(error => {
         console.log('Poisto ei onnistu!')

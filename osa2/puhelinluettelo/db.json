@@ -1,11 +1,6 @@
 {
   "persons": [
     {
-      "name": "Arto Hellas",
-      "number": "999 999 999",
-      "id": 1
-    },
-    {
       "name": "Ada Lovelace",
       "number": "39-44-5323523",
       "id": 2
@@ -21,29 +16,9 @@
       "id": 4
     },
     {
-      "name": "uusi nimi",
-      "number": "77665443",
-      "id": 5
-    },
-    {
-      "name": "Milla magia",
-      "number": "666 666",
-      "id": 6
-    },
-    {
-      "name": "mörkö",
-      "number": "545432432",
-      "id": 7
-    },
-    {
-      "name": "Ernesti Isoköntys",
-      "number": "888999",
-      "id": 8
-    },
-    {
-      "name": "Ihme tyyppi",
-      "number": "44444",
-      "id": 9
+      "name": "arto hellas",
+      "number": "321",
+      "id": 10
     }
   ]
 }

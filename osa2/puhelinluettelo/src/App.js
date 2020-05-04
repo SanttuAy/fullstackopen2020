@@ -4,6 +4,8 @@ import Naytettavat from './components/Naytettavat'
 import PersonForm from './components/PersonForm'
 import connectionService from './services/connections'
 import Ilmoitus from './components/Ilmoitus'
+import Virhe from './components/Virhe'
+//POISTA VIRHE-KOMPONENTTI, ELLET PALAUTA 2-20-TEHTÄVÄÄ & SIIVOA POIS CSS-TIEDOSTOSTA
 
 
 const App = () => {
@@ -20,6 +22,7 @@ const App = () => {
   const [ filtteri, setFiltteri ] = useState('') // filtteri jolla haetaan näytettävät
   const [ paivitettava, setPaivitettava] = useState(-1) //päivitettävän id
   const [ viesti, setViesti] = useState(null) //viesti suoritetusta toimenpiteestä 
+  const [ varoitus, setVaroitus ] = useState(null) // varoituksen teksti
   
   useEffect(() => {
     connectionService
@@ -35,8 +38,10 @@ const App = () => {
         name: newName,
         number: newNumber
     }
-    const paivitetaanko = isAlready
-    ? window.confirm(`${newName} on jo lisätty luetteloon. Vaihdetaanko hänen numeronsa uuteen?`)
+
+    const paivitetaanko = 
+    isAlready
+    ? window.confirm(`${newName} on jo lisätty luetteloon. Päivitetäänkö tiedot?`)
     : 
     connectionService
       .create(connectionObject)
@@ -52,23 +57,34 @@ const App = () => {
         setNewNumber('')
       })
       if (isAlready) setIsAlready(false)
-    if (paivitetaanko) {
+
+//      console.log( paivitetaanko === true ) //TESTAUSTA
+
+    if (paivitetaanko === true) { //saa arvon true/false jos confirm-ikkunasta valitaan vastaava vaihtoehto
       connectionService
         .update(paivitettava, connectionObject)
         .then(response => {
           setPersons(persons.map(person => person.id !== paivitettava ? person : response))
+          setViesti(
+            `Henkilön ${newName} tiedot päivitettiin`
+          )
+          setTimeout(() => {
+            setViesti(null)
+          }, 5000)
         })
-        setViesti(
-          `Henkilön ${newName} numero päivitettiin`
-        )
-        setTimeout(() => {
-          setViesti(null)
-        }, 5000) 
+        .catch(error => { //kun henkilötieto on jo poistettu
+          setVaroitus(
+            `Henkilön ${newName} tiedot on jo poistettu puhelinluettelosta!`
+          )
+          setTimeout(() => {
+            setVaroitus(null)
+          }, 5000)
+          setPersons(persons.filter(p => p.name !== newName))
+        })
         setNewName('')
         setNewNumber('')
-    }     
+    }   
   }
-
 
   const handleFilterChange = (event) => {
     setFiltteri(event.target.value)
@@ -80,7 +96,6 @@ const App = () => {
     setNewNumber(event.target.value)
   }
 
-
   const handleNameChange = (event) => {
     setNewName(event.target.value) //inputin syötekentän arvo
     
@@ -91,15 +106,16 @@ const App = () => {
     if (nimet.includes(newName.toLocaleLowerCase())) {
       setIsAlready(true)
       const etsitty = persons.find( person => person.name.toLocaleLowerCase() === newName.toLocaleLowerCase() ) 
-      setPaivitettava(etsitty.id)
+      setPaivitettava(etsitty.id) 
     }
   } 
-
+  
 
   return ( 
     <div>
       <h2>Phonebook</h2>
-      <Ilmoitus viesti={viesti} persons = {persons} />
+      <Ilmoitus viesti={viesti} persons = {persons} varoitus={varoitus} />
+      <Virhe varoitus = {varoitus} persons = {persons} />
       <div>
       filter show with <input
         value={filtteri}

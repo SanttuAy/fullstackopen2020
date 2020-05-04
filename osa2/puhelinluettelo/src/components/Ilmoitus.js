@@ -1,7 +1,7 @@
 import React from 'react'
 
-const Ilmoitus = ({ viesti }) => {
-    if (viesti === null) {
+const Ilmoitus = ({ viesti, varoitus }) => {
+    if (viesti === null || varoitus !== null) {
       return null
     }
   

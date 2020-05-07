@@ -1,7 +1,11 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
-
+app.use(morgan('tiny')) //oikea paikka app:in jälkeen!
 app.use(express.json())
+const cors = require('cors')
+app.use(cors())
+
 
 let persons = [
     {
@@ -66,7 +70,7 @@ const idGeneraattori = () => {
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
-
+  console.log(body) 
   if (!body.name || !body.number) {
     return response.status(400).json({ 
       error: 'henkilön tietoja puuttuu' 
@@ -93,7 +97,7 @@ if (nimet.includes(body.name.toLocaleLowerCase())) {
 })
 
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })

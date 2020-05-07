@@ -5,7 +5,7 @@ app.use(morgan('tiny')) //oikea paikka app:in jälkeen!
 app.use(express.json())
 const cors = require('cors')
 app.use(cors())
-
+app.use(express.static('build'))
 
 let persons = [
     {

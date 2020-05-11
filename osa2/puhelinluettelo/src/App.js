@@ -5,7 +5,6 @@ import PersonForm from './components/PersonForm'
 import connectionService from './services/connections'
 import Ilmoitus from './components/Ilmoitus'
 import Virhe from './components/Virhe'
-//POISTA VIRHE-KOMPONENTTI, ELLET PALAUTA 2-20-TEHTÄVÄÄ & SIIVOA POIS CSS-TIEDOSTOSTA
 
 
 const App = () => {

@@ -34,52 +34,51 @@ let persons = [
 ]
 
 
-
 app.get('/', (req, res) => {
   res.send('<h1>Puhelinluettelo</h1>')
 })
 
-app.get('/api/persons', (req, res) => { //tämä muokattu
+
+app.get('/api/persons', (req, res) => { 
   Person.find({}).then(result => {
     res.json(result.map(yhteystieto => yhteystieto.toJSON()))
   })
 })
 
- const paivays = new Date()
-app.get('/info', (req, res) => {
-res.send(`<div>Puhelinluettelossa on ${persons.length} henkilön tiedot</div> 
-  <div>${paivays}</div>
-  `)
-})
 
-app.get('/api/persons/:id', (request, response) => {
-  /*const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-  if (person) {
-    response.json(person)
-  } else {
-    response.status(404).end()
-  }*/
-  Person.findById(request.params.id).then (person => {
-    response.json(person.toJSON())
+
+app.get('/info', (req, res) => {
+  const paivays = new Date()
+  Person.estimatedDocumentCount({}).then (maara => {
+    console.log(`maara on: ${maara}`)
+    res.send(`<div>Puhelinluettelossa on ${maara} henkilön tiedot</div> 
+      <div>${paivays}</div>
+      `)
   })
 })
 
-app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  persons = persons.filter(person => person.id !== id)
 
-  response.status(204).end()
+app.get('/api/persons/:id', (request, response, next) => {
+  Person.findById(request.params.id).then (person => { 
+    if (person) {       //ts. "löytyykö tietokannasta tämä olio?""
+    response.json(person.toJSON())
+  } else {
+    response.status(404).end() 
+  }
+  })
+  .catch(error => next(error))    //keskitetään
 })
 
-/*
-const idGeneraattori = () => {
-  const maxId = persons.length > 0
-    ? Math.max(...persons.map(n => n.id))
-    : 0
-  return maxId + 1
-}
-*/
+
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndRemove(request.params.id)
+    .then( result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
+//  response.status(204).end()
+})
+
 
 app.post('/api/persons', (request, response) => {
   const body = request.body
@@ -93,8 +92,7 @@ app.post('/api/persons', (request, response) => {
 
   const person = new Person( {
     name: body.name,
-    number: body.number, 
-//    id: idGeneraattori(),
+    number: body.number 
   })
 
   const nimet = persons.map((person) => person.name.toLocaleLowerCase())
@@ -108,11 +106,45 @@ if (nimet.includes(body.name.toLocaleLowerCase())) {
   person.save().then(savedPerson => {
     response.json(savedPerson.toJSON())
   })
-  //persons = persons.concat(person)
-
-  //response.json(person)
 })
 
+
+app.put('/api/persons/:id', (request, response, next) => {
+  const body = request.body
+
+  const person = {
+    name: body.name,
+    number: body.number,
+  }
+
+  Person.findByIdAndUpdate(request.params.id, person, { new: true })
+    .then(updatedPerson => {
+      response.json(updatedPerson.toJSON())
+    })
+    .catch(error => next(error))
+})
+
+
+//Selvitetään onko kyse olemattomasta oliosta
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
+
+//Selvitetään onko kyse virheellisestä olio-id:stä
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
+
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
+
+  next(error)
+}
+
+app.use(errorHandler) //OLTAVA VIIMEISENÄ!
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {

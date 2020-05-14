@@ -10,7 +10,8 @@
     "build:ui": "rd /s /q build && cd ../osa3/puhelinluettelo && npm run build --prod && copy build ../../puhelinluettelo_backend/",
     "deploy": "git subtree push --prefix puhelinluettelo_backend heroku master",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push && npm run deploy",
-    "logs:prod": "heroku logs --tail"
+    "logs:prod": "heroku logs --tail",
+    "lint": "eslint ."
   },
   "repository": {
     "type": "git",

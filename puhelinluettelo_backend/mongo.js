@@ -27,18 +27,18 @@ const person = new Person({
 })
 
 if (process.argv.length===3) { //sisällön tulostus konsoliin
-    console.log('phonebook:')
-    Person.find({}).then(result => {
-        result.forEach(person => {
-          console.log(`${person.name} ${person.number}`)
-        })
-        mongoose.connection.close() //HUOM! tämän paikka tässä .then-takaisinkutsufunktion lopussa
-      })
-  }
-
-if (process.argv.length>3) {  
-    person.save().then(response => {
-        console.log(`added ${nimi} number ${numero} to phonebook`)
-        mongoose.connection.close()
+  console.log('phonebook:')
+  Person.find({}).then(result => {
+    result.forEach(person => {
+      console.log(`${person.name} ${person.number}`)
     })
+    mongoose.connection.close() //HUOM! tämän paikka tässä .then-takaisinkutsufunktion lopussa
+  })
+}
+
+if (process.argv.length>3) {
+  person.save().then(() => {
+    console.log(`added ${nimi} number ${numero} to phonebook`)
+    mongoose.connection.close()
+  })
 }

@@ -15,7 +15,7 @@ app.get('/', (req, res) => {
 })
 
 
-app.get('/api/persons', (req, res) => { 
+app.get('/api/persons', (req, res) => {
   Person.find({}).then(result => {
     res.json(result.map(yhteystieto => yhteystieto.toJSON()))
   })
@@ -34,20 +34,20 @@ app.get('/info', (req, res) => {
 
 
 app.get('/api/persons/:id', (request, response, next) => {
-  Person.findById(request.params.id).then (person => { 
+  Person.findById(request.params.id).then (person => {
     if (person) {       //ts. "löytyykö tietokannasta tämä olio?""
-    response.json(person.toJSON())
-  } else {
-    response.status(404).end() 
-  }
+      response.json(person.toJSON())
+    } else {
+      response.status(404).end()
+    }
   })
-  .catch(error => next(error))    //keskitetään
+    .catch(error => next(error))    //keskitetään
 })
 
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndRemove(request.params.id)
-    .then( result => {
+    .then( () => {
       response.status(204).end()
     })
     .catch(error => next(error))
@@ -56,18 +56,18 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
-  console.log(body) 
+  console.log(body)
 
   const person = new Person( {
     name: body.name,
-    number: body.number 
+    number: body.number
   })
 
   person.save()
     .then(savedPerson => {
-    response.json(savedPerson.toJSON())
-  })
-  .catch(error => next(error))
+      response.json(savedPerson.toJSON())
+    })
+    .catch(error => next(error))
 })
 
 

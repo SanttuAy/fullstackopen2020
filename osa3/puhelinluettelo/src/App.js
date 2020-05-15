@@ -55,6 +55,13 @@ const App = () => {
         setNewName('')
         setNewNumber('')
       })
+      .catch(error => {
+        setVaroitus(`${error.response.data.error}`)
+        console.log(error.response.data)
+        setTimeout(() => {
+          setVaroitus(null)
+        }, 5000)
+      })
       if (isAlready) setIsAlready(false)
 
 //      console.log( paivitetaanko === true ) //TESTAUSTA

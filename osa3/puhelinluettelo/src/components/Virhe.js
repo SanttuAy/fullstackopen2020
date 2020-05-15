@@ -8,7 +8,7 @@ const Virhe = ({ varoitus }) => {
     const varoitusStyle = {
         color: 'red',
         background: 'lightgrey',
-        fontSize: 40,
+        fontSize: 30,
         borderStyle: 'solid',
         borderRadius: 5,
         padding: 10,

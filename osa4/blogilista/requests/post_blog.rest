@@ -1,9 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im9wZTEiLCJpZCI6IjVlZGEyNWJmMjdjY2U3MDlhNGEzZmExMiIsImlhdCI6MTU5MTM1NjIwNH0.zZyQSCPPUYcDs3awvLSSrErRLavHd-HMPmYfRh9rr-w
 
 {
-	"title": "jotain juttuja",
-    "author": "Tuntematon Kirjoittaja",
-    "url": "omituinen/osoite",
-    "likes": 2
+	"title": "asiaa!",
+    "author": "kirjoittava ihminen",
+    "url": "olemassaoleva/osoite",
+    "likes": 112
 }

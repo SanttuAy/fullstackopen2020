@@ -1,16 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './index.css'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import BlogForm from './components/BlogForm'
+import Togglable from './components/Togglable'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newBlog, setNewBlog] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
-  const [username, setUsername] = useState('') 
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [message, setMessage] = useState(null)
@@ -19,8 +18,8 @@ const App = () => {
     blogService
       .getAll()
       .then(initialBlogs =>
-      setBlogs(initialBlogs)
-      )  
+        setBlogs(initialBlogs)
+      )
   }, [])
 
   useEffect(() => {
@@ -31,6 +30,7 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -56,33 +56,34 @@ const App = () => {
     }
   }
 
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newBlog,
-      author: newAuthor,
-      url: newUrl,
-    }
+  const blogFormRef = useRef()
 
-  blogService
-    .create(blogObject)
-    .then(returnedBlog => {
-      setBlogs(blogs.concat(returnedBlog))
-      setMessage(`a new blog ${newBlog} by ${newAuthor} added`)
-      setTimeout(() => {
-        setMessage(null)
-      }, 5000)
-      setNewBlog('')
-      setNewAuthor('')
-      setNewUrl('')
-    })
+  const blogForm = () => (
+    <Togglable buttonLabel='create new blog' ref={blogFormRef}>
+      <BlogForm
+        createBlog = {addBlog}
+      />
+    </Togglable>
+  )
+
+  const addBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility()
+    blogService
+      .create(blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        setMessage(`a new blog ${blogObject.newBlog} by ${blogObject.newAuthor} added`)
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
+      })
   }
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <div>
         username
-          <input
+        <input
           type="text"
           value={username}
           name="Username"
@@ -91,7 +92,7 @@ const App = () => {
       </div>
       <div>
         password
-          <input
+        <input
           type="password"
           value={password}
           name="Password"
@@ -114,38 +115,6 @@ const App = () => {
     }
   }
 
-  const blogForm = () => (
-    <form onSubmit={addBlog}>
-      <div>
-        title
-          <input
-          type="text"
-          value={newBlog}
-          name="NewBlog"
-          onChange={({ target }) => setNewBlog(target.value)}
-        />
-      </div>
-      <div>
-        author
-          <input
-          type="text"
-          value={newAuthor}
-          name="Author"
-          onChange={({ target }) => setNewAuthor(target.value)}
-        />
-      </div>
-      <div>
-        url
-          <input
-          type="text"
-          value={newUrl}
-          name="NewUrl"
-          onChange={({ target }) => setNewUrl(target.value)}
-        />
-      </div>
-      <button type="submit">create</button>
-    </form>  
-  )
 
   if (user === null) {
     return (
@@ -154,19 +123,18 @@ const App = () => {
         <Notification message={message} />
         {loginForm()}
       </div>
-    )  
+    )
   }
 
   return (
     <div>
       <h2>blogs</h2>
       <Notification message={message} />
-      <p>{user.name} logged in 
-      <button 
-      type="submit"
-      onClick={handleLogOut}>logout</button>
+      <p>{user.name} logged in
+        <button
+          type="submit"
+          onClick={handleLogOut}>logout</button>
       </p>
-      <h2>create new</h2>
       {blogForm()}
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />

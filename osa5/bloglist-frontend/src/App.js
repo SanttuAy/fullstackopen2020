@@ -115,6 +115,13 @@ const App = () => {
     }
   }
 
+  //KESKEN
+  const likeBlog = () => {
+    setMessage('You liked the blog!')
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
+  }
 
   if (user === null) {
     return (
@@ -137,7 +144,7 @@ const App = () => {
       </p>
       {blogForm()}
       {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} like={likeBlog} />
       )}
     </div>
   )

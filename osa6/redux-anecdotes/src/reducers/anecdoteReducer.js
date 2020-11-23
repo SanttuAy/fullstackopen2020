@@ -42,9 +42,8 @@ export const createAnecdote = (content) => {
 const initialState = anecdotesAtStart.map(asObject)
 
 const anecdoteReducer = (state = initialState, action) => {
-//  console.log('state now: ', state)
-  console.log('action', action)
-  console.log('state now: ', state)
+  console.log('anecdoteReducerista ACTION', action)
+  console.log('anecdoteReducerista state now: ', state)
 
   switch(action.type) {
     case 'NEW_ANECDOTE':

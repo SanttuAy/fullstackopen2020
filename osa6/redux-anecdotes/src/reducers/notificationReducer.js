@@ -18,4 +18,12 @@ export const notify = content => {
     }
   }
 
+  /*
+export const removeMessage = () => {
+  return {
+    type: 'SET_MESSAGE',
+    notification:null
+  }
+}*/
+
 export default notificationReducer

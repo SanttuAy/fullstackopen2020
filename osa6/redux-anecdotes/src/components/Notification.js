@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
-import { useSelector,  useDispatch } from 'react-redux'
-import { notify } from '../reducers/notificationReducer'
+import React from 'react' //, { useState, useEffect } 
+import { useSelector } from 'react-redux' //,  useDispatch
+//import { notify } from '../reducers/notificationReducer'
 
 
 const Notification = () => {
-  const dispatch = useDispatch()
+//  const dispatch = useDispatch()
   const notification = useSelector(state => state.notification)
  
  

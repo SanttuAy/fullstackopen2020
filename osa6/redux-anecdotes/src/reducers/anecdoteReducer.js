@@ -1,4 +1,6 @@
 
+import anecdoteService from '../services/anecdotes'
+
 const anecdotesAtStart = []
 
 const getId = () => (100000 * Math.random()).toFixed(0)
@@ -11,32 +13,62 @@ export const asObject = (anecdote) => {
   }
 }
 
-export const vote = (id) => {
-  console.log('vote', id)
+//EDELLINEN VERSIO
+/*
+export const vote = id => {
   return {
     type: 'VOTE',
     data:{ id }
   }
+}*/
+export const vote = (id, newObject) => {
+  return async dispatch => {
+    const changedAnecdote = await anecdoteService.update(id, newObject)
+    dispatch({
+      type: 'VOTE',
+      data: changedAnecdote
+    })
+  }
 }
 
-export const initializeAnecdotes = (anecdotes) => {
+// EDELLINEN VERSIO
+/*export const initializeAnecdotes = (anecdotes) => {
   return {
     type: 'INIT_ANECDOTES',
     data: anecdotes,
   }
+}*/
+export const initializeAnecdotes = () => {
+  return async dispatch => {
+    const anecdotes = await anecdoteService.getAll()
+    dispatch({
+      type: 'INIT_ANECDOTES',
+      data: anecdotes,
+    })
+  }
 }
 
-export const createAnecdote = (data) => {
+export const createAnecdote = content => {
+  return async dispatch => {
+    const newAnecdote = await anecdoteService.createNew(content)
+    dispatch({
+      type: 'NEW_ANECDOTE',
+      data: newAnecdote,
+    })
+  }
+}
+//EDELLINEN VERSIO
+/* export const createAnecdote = (data) => {
   return {
     type: 'NEW_ANECDOTE',
     data
-    /*  data: {
-      content,
-      id: getId(),
-      votes: 0
-    }*/
+   //   data: {
+  //    content,
+  //    id: getId(),
+  //    votes: 0
+  //  }
   }
-}
+}*/
 
 const initialState = anecdotesAtStart.map(asObject)
 

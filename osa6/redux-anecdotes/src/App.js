@@ -9,10 +9,17 @@ import anecdoteService from './services/anecdotes'
 
 const App = () => {
   const dispatch = useDispatch()
+  
+  // VANHA
+  /*
   useEffect(() => {
     anecdoteService
       .getAll().then(anecdotes => dispatch(initializeAnecdotes(anecdotes)))
-  }, [dispatch])
+  }, [dispatch])*/
+  
+  useEffect(() => {
+    dispatch(initializeAnecdotes()) 
+  },[dispatch])
 
   return (
     <div>

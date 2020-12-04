@@ -1,7 +1,28 @@
 import React, { useState } from 'react'
 import {
-  Switch, Route, Link
+  Switch, Route, Link, useParams
 } from "react-router-dom"
+
+const Anecdote = ({ anecdotes }) => {
+  const id = useParams().id
+  console.log(`id on ${id}`)
+  console.log(`anecdotes on ${anecdotes}`)
+  const anecdote = anecdotes.find( n => {
+    console.log(`n.id on ${n.id}`)
+    const a = n.id === id
+    console.log(`a on ${a}`)
+    return a
+  })
+  console.log(anecdote) //TULOSTAA UNDEFINED
+  return (
+    <div>
+      <h2>{anecdote.content}</h2>
+      <div>has {anecdote.votes} votes</div>
+  <div>for more info see <a href={anecdote.info}>{anecdote.info}</a></div>
+    </div>
+  )
+}
+
 
 const Menu = () => {
   const padding = {
@@ -20,7 +41,11 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map(anecdote => 
+      <li key={anecdote.id} >
+        <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+        </li>
+        )}
     </ul>
   </div>
 )
@@ -123,6 +148,9 @@ const App = () => {
       <h1>Software anecdotes</h1>
       <Menu />
       <Switch>
+        <Route path="/anecdotes/:id">
+          <Anecdote anecdotes={anecdotes} />
+        </Route>
         <Route path="/about">
           <About />
         </Route>
